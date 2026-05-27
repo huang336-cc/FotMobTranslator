@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/navigation_matches">
+
+    <fragment
+        android:id="@+id/navigation_matches"
+        android:name="com.fotmob.translator.ui.matches.MatchesFragment"
+        android:label="@string/tab_matches" />
+
+    <fragment
+        android:id="@+id/navigation_leagues"
+        android:name="com.fotmob.translator.ui.leagues.LeaguesFragment"
+        android:label="@string/tab_leagues" />
+
+    <fragment
+        android:id="@+id/navigation_news"
+        android:name="com.fotmob.translator.ui.news.NewsFragment"
+        android:label="@string/tab_news" />
+
+    <fragment
+        android:id="@+id/navigation_players"
+        android:name="com.fotmob.translator.ui.players.PlayersFragment"
+        android:label="@string/tab_players" />
+
+</navigation>
