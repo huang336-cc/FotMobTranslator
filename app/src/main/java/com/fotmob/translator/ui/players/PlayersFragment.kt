@@ -85,9 +85,9 @@ class PlayersFragment : Fragment() {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.spinnerTeam.adapter = adapter
 
-        binding.spinnerTeam.onItemSelectedListener = object : android.widget.AdapterView.OnItemSelectedListener {
+        binding.spinnerTeam.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
-                parent: android.view.AdapterView<*>?,
+                parent: AdapterView<*>?,
                 view: View?,
                 position: Int,
                 id: Long
@@ -97,7 +97,7 @@ class PlayersFragment : Fragment() {
                 loadPlayers()
             }
 
-            override fun onNothingSelected(parent: android.view.AdapterView<*>?) {}
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
     }
 

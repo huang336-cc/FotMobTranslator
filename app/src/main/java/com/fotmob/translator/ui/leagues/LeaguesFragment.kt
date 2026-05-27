@@ -76,8 +76,8 @@ class LeaguesFragment : Fragment() {
         binding.tabLayout.addTab(binding.tabLayout.newTab().setText("Leagues"))
         binding.tabLayout.addTab(binding.tabLayout.newTab().setText("Standings"))
 
-        binding.tabLayout.addOnTabSelectedListener(object : androidx.viewpager.widget.TabLayout.OnTabSelectedListener {
-            override fun onTabSelected(tab: androidx.viewpager.widget.TabLayout.Tab) {
+        binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab) {
                 when (tab.position) {
                     0 -> {
                         binding.recyclerViewLeagues.visibility = View.VISIBLE
@@ -93,8 +93,8 @@ class LeaguesFragment : Fragment() {
                 }
             }
 
-            override fun onTabUnselected(tab: androidx.viewpager.widget.TabLayout.Tab) {}
-            override fun onTabReselected(tab: androidx.viewpager.widget.TabLayout.Tab) {}
+            override fun onTabUnselected(tab: TabLayout.Tab) {}
+            override fun onTabReselected(tab: TabLayout.Tab) {}
         })
     }
 
