@@ -40,7 +40,7 @@
     <color name="rating">#FFD700</color>
 
     <!-- Bottom nav -->
-    <color name="bottom_nav_color">#B0B0B0</color>
+    <color name="bottom_nav_unselected">#B0B0B0</color>
     <color name="bottom_nav_selected">#4CAF50</color>
 
     <!-- Misc -->
