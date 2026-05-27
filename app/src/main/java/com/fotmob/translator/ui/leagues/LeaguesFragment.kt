@@ -12,6 +12,7 @@ import com.fotmob.translator.FotMobApplication
 import com.fotmob.translator.data.model.League
 import com.fotmob.translator.data.model.Standing
 import com.fotmob.translator.databinding.FragmentLeaguesBinding
+import com.google.android.material.tabs.TabLayout
 import kotlinx.coroutines.launch
 
 class LeaguesFragment : Fragment() {
