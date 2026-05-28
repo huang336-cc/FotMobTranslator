@@ -316,7 +316,7 @@ class FotMobRepository(
         val players = mutableListOf<Player>()
 
         // Try multiple possible JSON structures
-        val playersArray: JsonArray? = try {
+        val playersArray: JsonArray = try {
             // Structure 1: squad.players
             json.getAsJsonObject("squad")?.getAsJsonArray("players")
         } catch (e: Exception) { null }
