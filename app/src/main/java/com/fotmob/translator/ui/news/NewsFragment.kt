@@ -14,7 +14,6 @@ import com.fotmob.translator.R
 import com.fotmob.translator.data.model.NewsItem
 import com.fotmob.translator.databinding.FragmentNewsBinding
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 class NewsFragment : Fragment() {
@@ -78,13 +77,8 @@ class NewsFragment : Fragment() {
                 adapter.updateData(newsItems)
 
                 // 立即启动翻译（异步并行）
-                val deferred = async(Dispatchers.IO) {
+                launch(Dispatchers.IO) {
                     translateNewsItems(newsItems)
-                }
-                deferred.invokeOnCompletion {
-                    if (deferred.getCompletionCountThrowable() != null) {
-                        Toast.makeText(requireContext(), "翻译加载中...", Toast.LENGTH_SHORT).show()
-                    }
                 }
             } catch (e: Exception) {
                 Toast.makeText(requireContext(), "加载失败: ${e.message}", Toast.LENGTH_SHORT).show()
