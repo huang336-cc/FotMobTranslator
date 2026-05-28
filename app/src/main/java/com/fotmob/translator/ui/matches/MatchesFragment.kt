@@ -88,9 +88,13 @@ class MatchesFragment : Fragment() {
             try {
                 val matches = app.repository.getMatches(date)
                 adapter.updateData(matches)
+                if (matches.isEmpty()) {
+                    // Show empty state
+                    android.widget.Toast.makeText(requireContext(), "No matches found for this date", android.widget.Toast.LENGTH_SHORT).show()
+                }
                 translateMatches(matches)
             } catch (e: Exception) {
-                // Handle error silently
+                android.widget.Toast.makeText(requireContext(), "Failed to load matches: ${e.message}", android.widget.Toast.LENGTH_SHORT).show()
             } finally {
                 binding.swipeRefreshLayout.isRefreshing = false
             }

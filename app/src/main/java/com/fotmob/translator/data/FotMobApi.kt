@@ -7,7 +7,6 @@ import com.fotmob.translator.data.model.Standing
 import com.google.gson.JsonObject
 import retrofit2.http.GET
 import retrofit2.http.Query
-import retrofit2.http.Url
 
 interface FotMobApi {
 
@@ -55,6 +54,6 @@ interface FotMobApi {
         @Query("id") id: Long
     ): JsonObject
 
-    @GET
-    suspend fun getNewsFeed(@Url url: String = "https://www.fotmob.com/api/topnews/feed"): String
+    @GET("https://www.fotmob.com/api/topnews/feed")
+    suspend fun getNewsFeed(): String
 }

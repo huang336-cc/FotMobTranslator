@@ -105,9 +105,12 @@ class LeaguesFragment : Fragment() {
             try {
                 leagues = app.repository.getAllLeagues()
                 leaguesAdapter.updateData(leagues)
+                if (leagues.isEmpty()) {
+                    android.widget.Toast.makeText(requireContext(), "No leagues found", android.widget.Toast.LENGTH_SHORT).show()
+                }
                 translateLeagues(leagues)
             } catch (e: Exception) {
-                // Handle error silently
+                android.widget.Toast.makeText(requireContext(), "Failed to load leagues: ${e.message}", android.widget.Toast.LENGTH_SHORT).show()
             } finally {
                 binding.swipeRefreshLayout.isRefreshing = false
             }
@@ -140,9 +143,12 @@ class LeaguesFragment : Fragment() {
             try {
                 val standings = app.repository.getLeagueTable(currentLeagueId)
                 standingAdapter.updateData(standings)
+                if (standings.isEmpty()) {
+                    android.widget.Toast.makeText(requireContext(), "No standings found for this league", android.widget.Toast.LENGTH_SHORT).show()
+                }
                 translateStandings(standings)
             } catch (e: Exception) {
-                // Handle error silently
+                android.widget.Toast.makeText(requireContext(), "Failed to load standings: ${e.message}", android.widget.Toast.LENGTH_SHORT).show()
             } finally {
                 binding.swipeRefreshLayout.isRefreshing = false
             }

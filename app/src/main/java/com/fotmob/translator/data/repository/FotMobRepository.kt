@@ -314,21 +314,41 @@ class FotMobRepository(
 
     private fun parseTeamPlayers(json: JsonObject): List<Player> {
         val players = mutableListOf<Player>()
-        val squadObj = json.getAsJsonObject("squad") ?: return emptyList()
-        val playersArray = squadObj.getAsJsonArray("players") ?: return emptyList()
+
+        // Try multiple possible JSON structures
+        val playersArray: JsonArray? = try {
+            // Structure 1: squad.players
+            json.getAsJsonObject("squad")?.getAsJsonArray("players")
+        } catch (e: Exception) { null }
+            ?: try {
+                // Structure 2: squad (array)
+                json.getAsJsonArray("squad")
+            } catch (e: Exception) { null }
+            ?: try {
+                // Structure 3: players (direct array)
+                json.getAsJsonArray("players")
+            } catch (e: Exception) { null }
+            ?: return emptyList()
+
+        val teamDetails = json.getAsJsonObject("details")
+        val team = teamDetails?.let {
+            PlayerTeam(
+                id = it.get("id")?.asLong ?: 0,
+                name = it.get("name")?.asString ?: "Unknown",
+                shortName = it.get("shortName")?.asString,
+                imageUrl = it.get("imageUrl")?.asString
+            )
+        }
 
         for (playerElement in playersArray) {
             val playerObj = playerElement.asJsonObject
-            val teamObj = json.getAsJsonObject("details")?.let {
-                PlayerTeam(
-                    id = it.get("id")?.asLong ?: 0,
-                    name = it.get("name")?.asString ?: "Unknown",
-                    shortName = it.get("shortName")?.asString,
-                    imageUrl = it.get("imageUrl")?.asString
-                )
-            }
 
-            val countryObj = playerObj.getAsJsonObject("country")
+            // Some entries might be objects with a "player" sub-object
+            val actualPlayerObj = try {
+                playerObj.getAsJsonObject("player") ?: playerObj
+            } catch (e: Exception) { playerObj }
+
+            val countryObj = actualPlayerObj.getAsJsonObject("country")
             val country = countryObj?.let {
                 PlayerCountry(
                     name = it.get("name")?.asString,
@@ -339,14 +359,14 @@ class FotMobRepository(
 
             players.add(
                 Player(
-                    id = playerObj.get("id")?.asLong ?: 0,
-                    name = playerObj.get("name")?.asString ?: "Unknown",
-                    shortName = playerObj.get("shortName")?.asString,
-                    playerTeam = teamObj,
-                    position = playerObj.get("position")?.asString,
+                    id = actualPlayerObj.get("id")?.asLong ?: 0,
+                    name = actualPlayerObj.get("name")?.asString ?: "Unknown",
+                    shortName = actualPlayerObj.get("shortName")?.asString,
+                    playerTeam = team,
+                    position = actualPlayerObj.get("position")?.asString,
                     country = country,
-                    imageUrl = playerObj.get("imageUrl")?.asString,
-                    dateOfBirthTimestamp = playerObj.get("dateOfBirthTimestamp")?.asLong
+                    imageUrl = actualPlayerObj.get("imageUrl")?.asString,
+                    dateOfBirthTimestamp = actualPlayerObj.get("dateOfBirthTimestamp")?.asLong
                 )
             )
         }
@@ -358,8 +378,17 @@ class FotMobRepository(
 
     suspend fun getNewsFeed(): List<NewsItem> = withContext(Dispatchers.IO) {
         try {
-            val xmlResponse = api.getNewsFeed()
-            parseNewsXml(xmlResponse)
+            val client = okhttp3.OkHttpClient.Builder()
+                .connectTimeout(15, java.util.concurrent.TimeUnit.SECONDS)
+                .readTimeout(15, java.util.concurrent.TimeUnit.SECONDS)
+                .build()
+            val request = okhttp3.Request.Builder()
+                .url("https://www.fotmob.com/topnews/feed")
+                .header("User-Agent", "Mozilla/5.0 (Linux; Android 16) AppleWebKit/537.36")
+                .build()
+            val response = client.newCall(request).execute()
+            val xml = response.body?.string() ?: return@withContext emptyList()
+            parseNewsXml(xml)
         } catch (e: Exception) {
             emptyList()
         }
