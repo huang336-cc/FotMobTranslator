@@ -2,23 +2,18 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/navigation_matches"
-        android:icon="@android:drawable/ic_menu_today"
-        android:title="@string/tab_matches" />
-
-    <item
         android:id="@+id/navigation_leagues"
         android:icon="@android:drawable/ic_menu_sort_by_size"
         android:title="@string/tab_leagues" />
 
     <item
-        android:id="@+id/navigation_news"
-        android:icon="@android:drawable/ic_menu_info_details"
-        android:title="@string/tab_news" />
-
-    <item
         android:id="@+id/navigation_players"
         android:icon="@android:drawable/ic_menu_myplaces"
         android:title="@string/tab_players" />
+
+    <item
+        android:id="@+id/navigation_news"
+        android:icon="@android:drawable/ic_menu_info_details"
+        android:title="@string/tab_news" />
 
 </menu>

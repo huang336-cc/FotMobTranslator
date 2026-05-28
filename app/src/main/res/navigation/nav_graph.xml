@@ -2,12 +2,7 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/navigation_matches">
-
-    <fragment
-        android:id="@+id/navigation_matches"
-        android:name="com.fotmob.translator.ui.matches.MatchesFragment"
-        android:label="@string/tab_matches" />
+    app:startDestination="@id/navigation_leagues">
 
     <fragment
         android:id="@+id/navigation_leagues"
@@ -15,13 +10,22 @@
         android:label="@string/tab_leagues" />
 
     <fragment
-        android:id="@+id/navigation_news"
-        android:name="com.fotmob.translator.ui.news.NewsFragment"
-        android:label="@string/tab_news" />
-
-    <fragment
         android:id="@+id/navigation_players"
         android:name="com.fotmob.translator.ui.players.PlayersFragment"
         android:label="@string/tab_players" />
+
+    <fragment
+        android:id="@+id/navigation_news"
+        android:name="com.fotmob.translator.ui.news.NewsFragment"
+        android:label="@string/tab_news">
+        <action
+            android:id="@+id/action_news_to_detail"
+            app:destination="@id/newsDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/newsDetailFragment"
+        android:name="com.fotmob.translator.ui.news.NewsDetailFragment"
+        android:label="@string/news_detail" />
 
 </navigation>

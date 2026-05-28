@@ -31,7 +31,7 @@ class GoogleTranslator(
         private const val MAX_RETRIES = 3
         private const val RATE_LIMIT_MS = 200L // 5 requests per second
         private const val BATCH_SEPARATOR = "\n"
-        private const val MAX_BATCH_SIZE = 20
+        private const val MAX_BATCH_SIZE = 50
     }
 
     /**

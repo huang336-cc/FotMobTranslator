@@ -1,17 +1,20 @@
 package com.fotmob.translator.ui.news
 
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.fotmob.translator.FotMobApplication
+import com.fotmob.translator.R
 import com.fotmob.translator.data.model.NewsItem
 import com.fotmob.translator.databinding.FragmentNewsBinding
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 class NewsFragment : Fragment() {
@@ -43,10 +46,15 @@ class NewsFragment : Fragment() {
     private fun setupRecyclerView() {
         adapter = NewsAdapter()
         adapter.setOnNewsClickListener { newsItem ->
-            if (newsItem.link.isNotEmpty()) {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(newsItem.link))
-                startActivity(intent)
+            val bundle = Bundle().apply {
+                putString("url", newsItem.link)
+                putString("title", newsItem.title)
+                putString("summary", newsItem.summary)
+                putString("thumbnailUrl", newsItem.thumbnailUrl)
+                putLong("publishedTime", newsItem.publishedTime)
+                putString("source", newsItem.source)
             }
+            findNavController().navigate(R.id.action_news_to_detail, bundle)
         }
         binding.recyclerViewNews.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerViewNews.adapter = adapter
@@ -64,32 +72,47 @@ class NewsFragment : Fragment() {
         lifecycleScope.launch {
             try {
                 val newsItems = app.repository.getNewsFeed()
+                if (newsItems.isEmpty()) {
+                    Toast.makeText(requireContext(), "暂无新闻", Toast.LENGTH_SHORT).show()
+                }
                 adapter.updateData(newsItems)
-                translateNews(newsItems)
+
+                // 立即启动翻译（异步并行）
+                val deferred = async(Dispatchers.IO) {
+                    translateNewsItems(newsItems)
+                }
+                deferred.invokeOnCompletion {
+                    if (deferred.getCompletionCountThrowable() != null) {
+                        Toast.makeText(requireContext(), "翻译加载中...", Toast.LENGTH_SHORT).show()
+                    }
+                }
             } catch (e: Exception) {
-                // Handle error silently
+                Toast.makeText(requireContext(), "加载失败: ${e.message}", Toast.LENGTH_SHORT).show()
             } finally {
                 binding.swipeRefreshLayout.isRefreshing = false
             }
         }
     }
 
-    private fun translateNews(newsItems: List<NewsItem>) {
-        lifecycleScope.launch {
-            try {
-                val textsToTranslate = mutableSetOf<String>()
-                for (item in newsItems) {
-                    if (item.title.isNotBlank()) textsToTranslate.add(item.title)
-                    if (item.summary.isNotBlank()) textsToTranslate.add(item.summary)
-                }
-
-                val translations = app.translator.translateBatch(textsToTranslate.toList())
-                val translationMap = textsToTranslate.zip(translations).toMap()
-
-                adapter.updateTranslations(translationMap)
-            } catch (e: Exception) {
-                // Translation failed, show original text
+    private suspend fun translateNewsItems(newsItems: List<NewsItem>) {
+        try {
+            val textsToTranslate = mutableSetOf<String>()
+            for (item in newsItems) {
+                if (item.title.isNotBlank()) textsToTranslate.add(item.title)
+                if (item.summary.isNotBlank()) textsToTranslate.add(item.summary)
             }
+
+            if (textsToTranslate.isEmpty()) return
+
+            val translations = app.translator.translateBatch(textsToTranslate.toList())
+            val translationMap = textsToTranslate.zip(translations).toMap()
+
+            // 切回主线程更新 UI
+            kotlinx.coroutines.withContext(Dispatchers.Main) {
+                adapter.updateTranslations(translationMap)
+            }
+        } catch (e: Exception) {
+            // 翻译失败，显示原文
         }
     }
 

@@ -57,17 +57,17 @@ object DateUtils {
     }
 
     /**
-     * Format timestamp to relative time (e.g., "2 hours ago")
+     * Format timestamp to relative time (e.g., "2小时前")
      */
     fun formatRelativeTime(timestamp: Long): String {
         val now = System.currentTimeMillis()
         val diff = now - timestamp
 
         return when {
-            diff < 60 * 1000 -> "just now"
-            diff < 60 * 60 * 1000 -> "${diff / (60 * 1000)} minutes ago"
-            diff < 24 * 60 * 60 * 1000 -> "${diff / (60 * 60 * 1000)} hours ago"
-            diff < 7 * 24 * 60 * 60 * 1000 -> "${diff / (24 * 60 * 60 * 1000)} days ago"
+            diff < 60 * 1000 -> "刚刚"
+            diff < 60 * 60 * 1000 -> "${diff / (60 * 1000)}分钟前"
+            diff < 24 * 60 * 60 * 1000 -> "${diff / (60 * 60 * 1000)}小时前"
+            diff < 7 * 24 * 60 * 60 * 1000 -> "${diff / (24 * 60 * 60 * 1000)}天前"
             else -> formatFullDate(timestamp)
         }
     }
