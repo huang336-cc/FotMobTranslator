@@ -38,16 +38,20 @@ jobs:
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
       uses: softprops/action-gh-release@v1
       with:
-        tag_name: v1.0.${{ github.run_number }}
-        name: Release v1.0.${{ github.run_number }}
+        tag_name: v1.1.${{ github.run_number }}
+        name: Release v1.1.${{ github.run_number }}
         body: |
-          ## FotMob Translator v1.0.${{ github.run_number }}
+          ## FotMob Translator v1.1.${{ github.run_number }}
 
-          ### Features
-          - Real-time football match scores with auto-translation
-          - League standings and fixtures
-          - Football news with translated titles
-          - Player statistics and ratings
+          ### Bug Fixes
+          - Fix NewsFragment crash on navigation
+          - Fix PlayersFragment crash when loading team data
+          - Fix MatchesFragment infinite loading spinner
+          - Fix LeaguesFragment error handling
+
+          ### Android 16 Adaptation
+          - Upgrade targetSdk to 35 (Android 16)
+          - Upgrade all dependencies to latest versions
 
           ### Installation
           Download the APK file below and install it on your Android device.
